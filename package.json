@@ -18,11 +18,13 @@
   },
   "homepage": "https://github.com/eliseevmir/movies-explorer-api#readme",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "express-rate-limit": "^6.6.0",
     "helmet": "^6.0.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.5.4",
     "validator": "^13.7.0"
   },
