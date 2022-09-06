@@ -1,0 +1,34 @@
+{
+  "name": "movies-explorer-api",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node ./app.js",
+    "dev": "nodemon app.js",
+    "lint": "npx eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eliseevmir/movies-explorer-api.git"
+  },
+  "author": "Vladimir Burlyaev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eliseevmir/movies-explorer-api/issues"
+  },
+  "homepage": "https://github.com/eliseevmir/movies-explorer-api#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1",
+    "express-rate-limit": "^6.6.0",
+    "helmet": "^6.0.0",
+    "mongoose": "^6.5.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.23.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "nodemon": "^2.0.19"
+  }
+}
