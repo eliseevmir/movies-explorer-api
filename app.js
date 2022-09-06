@@ -15,7 +15,7 @@ const limiter = rateLimit({
 const app = express();
 app.use(helmet());
 app.use(limiter);
-mongoose.connect('mongodb://127.0.0.1:27017/moviesdb');
+mongoose.connect('mongodb://127.0.0.1:27017/bitfilmsdb');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
