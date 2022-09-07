@@ -57,7 +57,7 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  Movie.findByIdAndRemove(req.params.cardId)
+  Movie.findByIdAndRemove(req.params._Id)
     .orFail(new NotFoundError('Фильм с указанным _id не найден'))
     .then((movie) => {
       res.status(STATUS_CODE_200).send(movie);
