@@ -3,6 +3,7 @@ const Movie = require('../models/movie');
 
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
 const { STATUS_CODE_200 } = require('../utils/constants');
 
 module.exports.getMovies = async (req, res, next) => {
@@ -24,7 +25,7 @@ module.exports.createMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
+    trailerLink,
     nameRU,
     nameEN,
     thumbnail,
@@ -39,7 +40,7 @@ module.exports.createMovie = (req, res, next) => {
     year,
     description,
     image,
-    trailer,
+    trailerLink,
     nameRU,
     nameEN,
     thumbnail,
@@ -49,7 +50,7 @@ module.exports.createMovie = (req, res, next) => {
     res.status(STATUS_CODE_200).send(movie);
   }).catch((err) => {
     if (err instanceof mongoose.Error.ValidationError) {
-      next(new BadRequestError('Некорректные данные при создании карточки'));
+      next(new BadRequestError('Некорректные данные'));
     } else {
       next(err);
     }
@@ -57,9 +58,20 @@ module.exports.createMovie = (req, res, next) => {
 };
 
 module.exports.deleteMovie = (req, res, next) => {
-  Movie.findByIdAndRemove(req.params._Id)
+  const idMovie = req.params._id;
+  const userId = req.user._id;
+  Movie.findById(idMovie)
     .orFail(new NotFoundError('Фильм с указанным _id не найден'))
     .then((movie) => {
-      res.status(STATUS_CODE_200).send(movie);
+      const owner = movie.owner.valueOf();
+
+      if (owner !== userId) {
+        throw new ForbiddenError('Фильм добавлен другим пользователем, удалить нельзя');
+      }
+
+      return Movie.findByIdAndRemove(idMovie)
+        .then((movieDate) => {
+          res.status(STATUS_CODE_200).send(movieDate);
+        });
     }).catch(next);
 };

@@ -32,7 +32,7 @@ module.exports = celebrate({
       'string.empty': 'Поле не должно быть пустым',
       'any.required': 'Email обязателен',
     }),
-    trailer: Joi.string().required().pattern(new RegExp(LINKREGEXP)).messages({
+    trailerLink: Joi.string().required().pattern(new RegExp(LINKREGEXP)).messages({
       'string.pattern.base': 'Некорректная ссылка',
       'string.empty': 'Поле не должно быть пустым',
       'any.required': 'Email обязателен',

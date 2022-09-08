@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
-require('dotenv').config();
 
 const { JWT_SECRET, NODE_ENV } = process.env;
 
@@ -37,7 +36,7 @@ module.exports.createUser = (req, res, next) => {
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findById({ email })
+  User.findOne({ email })
     .select('+password')
     .then((user) => {
       if (!user) {
@@ -49,14 +48,14 @@ module.exports.login = (req, res, next) => {
           return Promise.reject(new UnAuthorizedError('Пользователь не найден или введен неверный пароль'));
         }
 
-        const payload = { _id: user._Id };
+        const payload = { _id: user._id };
         const token = jwt.sign(
           payload,
           NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
           { expiresIn: '7d' },
         );
 
-        return res.send({ token });
+        return res.status(STATUS_CODE_200).send({ token });
       });
     })
     .catch(next);

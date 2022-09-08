@@ -5,6 +5,6 @@ const requestParamsMovieSchemaValidation = require('../schemaValidator/requestPa
 
 router.get('/movies', getMovies);
 router.post('/movies', createMovieSchemaValidation, createMovie);
-router.delete('/movies/_id', requestParamsMovieSchemaValidation, deleteMovie);
+router.delete('/movies/:_id', requestParamsMovieSchemaValidation, deleteMovie);
 
 module.exports = router;
