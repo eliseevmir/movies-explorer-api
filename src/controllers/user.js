@@ -13,20 +13,20 @@ const UnAuthorizedError = require('../errors/UnAuthorized');
 const ConflictingRequestError = require('../errors/ConflictingRequestError');
 
 module.exports.createUser = (req, res, next) => {
-  const { name, password, email } = req.body;
+  const { name, password: userPassword, email } = req.body;
 
-  return bcrypt.hash(password, 10).then((hash) => {
+  return bcrypt.hash(userPassword, 10).then((hash) => {
     User.create({ name, password: hash, email })
       .then((user) => {
-        // eslint-disable-next-line no-shadow
         const { password, ...userData } = user._doc;
         return res.status(STATUS_CODE_201).send(userData);
       })
       .catch((err) => {
         if (err.code === 11000) {
-          next(new ConflictingRequestError('Пользователь с указанным email существует'));
-        } else if (err instanceof mongoose.Error.ValidationError) {
-          next(new BadRequestError('Не вернные данные'));
+          return next(new ConflictingRequestError('Пользователь с указанным email существует'));
+        }
+        if (err instanceof mongoose.Error.ValidationError) {
+          return next(new BadRequestError('Не валидные данные для создания пользователя'));
         }
         return next(err);
       });
@@ -78,10 +78,12 @@ module.exports.patchUser = (req, res, next) => {
     .then((user) => {
       res.status(STATUS_CODE_200).send(user);
     }).catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError('Не вернные данные'));
-      } else {
-        next(err);
+      if (err.code === 11000) {
+        return next(new ConflictingRequestError('Пользователь с указанным email существует'));
       }
+      if (err instanceof mongoose.Error.ValidationError) {
+        return next(new BadRequestError('Не валидные данные при обновлении информации о пользователе'));
+      }
+      return next(err);
     });
 };
