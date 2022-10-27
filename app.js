@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const routers = require('./src/routes/allRouters');
 
@@ -20,6 +21,7 @@ const limiter = rateLimit({
 });
 
 const app = express();
+app.use(cors());
 app.use(helmet());
 app.use(requestLogger);
 app.use(limiter);
