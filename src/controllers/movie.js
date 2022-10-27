@@ -17,7 +17,7 @@ module.exports.getMovies = async (req, res, next) => {
   }
 };
 
-module.exports.createMovie = (req, res, next) => {
+module.exports.createMovie = async (req, res, next) => {
   const {
     country,
     director,
@@ -32,6 +32,12 @@ module.exports.createMovie = (req, res, next) => {
     movieId,
   } = req.body;
   const owner = req.user._id;
+
+  const allReadyExist = await Movie.find({ movieId }).then((movie) => !!movie.length);
+  if (allReadyExist) {
+    next(new BadRequestError('Фильм уже добавлен'));
+    return;
+  }
 
   Movie.create({
     country,
@@ -60,7 +66,7 @@ module.exports.createMovie = (req, res, next) => {
 module.exports.deleteMovie = (req, res, next) => {
   const idMovie = req.params._id;
   const userId = req.user._id;
-  Movie.findById(idMovie)
+  Movie.findOne({ movieId: idMovie })
     .orFail(new NotFoundError('Фильм с указанным _id не найден'))
     .then((movie) => {
       const owner = movie.owner.valueOf();
@@ -69,7 +75,7 @@ module.exports.deleteMovie = (req, res, next) => {
         throw new ForbiddenError('Фильм добавлен другим пользователем, удалить нельзя');
       }
 
-      return Movie.findByIdAndRemove(idMovie)
+      return Movie.findByIdAndRemove(movie._id)
         .then((movieDate) => {
           res.status(STATUS_CODE_200).send(movieDate);
         });
