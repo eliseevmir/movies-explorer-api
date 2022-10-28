@@ -8,7 +8,8 @@ const { STATUS_CODE_200 } = require('../utils/constants');
 
 module.exports.getMovies = async (req, res, next) => {
   try {
-    await Movie.find({})
+    const owner = req.user._id;
+    await Movie.find({ owner })
       .then((movies) => {
         res.status(STATUS_CODE_200).send(movies);
       });
@@ -33,7 +34,7 @@ module.exports.createMovie = async (req, res, next) => {
   } = req.body;
   const owner = req.user._id;
 
-  const allReadyExist = await Movie.find({ movieId }).then((movie) => !!movie.length);
+  const allReadyExist = await Movie.find({ movieId, owner }).then((movie) => !!movie.length);
   if (allReadyExist) {
     next(new BadRequestError('Фильм уже добавлен'));
     return;
@@ -66,7 +67,7 @@ module.exports.createMovie = async (req, res, next) => {
 module.exports.deleteMovie = (req, res, next) => {
   const idMovie = req.params._id;
   const userId = req.user._id;
-  Movie.findOne({ movieId: idMovie })
+  Movie.findOne({ movieId: idMovie, owner: userId })
     .orFail(new NotFoundError('Фильм с указанным _id не найден'))
     .then((movie) => {
       const owner = movie.owner.valueOf();
